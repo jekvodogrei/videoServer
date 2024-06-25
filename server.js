@@ -25,7 +25,7 @@ app.use((req, res, next) => {
 const Camera = mongoose.model("Camera", cameraSchema);
 
 mongoose
-   .connect("mongodb://localhost:27017/triolan", {
+   .connect("mongodb://91.196.177.159/:27017/triolan", {
       useNewUrlParser: true,
       useUnifiedTopology: true,
    })
@@ -301,7 +301,7 @@ app.get("/stream/:cameraIp", (req, res) => {
    console.log(`Received request for stream from camera IP: ${cameraIp}`);
 
    // Логіка для отримання URL стріму камери
-   const streamUrl = `http://localhost:${PORT}/stream/${cameraIp}`;
+   const streamUrl = `http://91.196.177.159:${PORT}/stream/${cameraIp}`;
 
    if (!fs.existsSync(streamUrl)) {
       console.error(`Stream URL not found: ${streamUrl}`);
@@ -353,7 +353,7 @@ app.get("/archive/:date/:cameraIp/:startDate/:endDate", (req, res) => {
    const foundFiles = searchFiles(cameraIp, start, end);
 
    res.json({
-      url: `http://localhost:${PORT}/archive/${date}/${cameraIp}/${startDate}/${endDate}`,
+      url: `http://91.196.177.159${PORT}/archive/${date}/${cameraIp}/${startDate}/${endDate}`,
    });
 
    if (foundFiles.length > 0) {
