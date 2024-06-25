@@ -1,0 +1,41 @@
+name: Deploy to Video Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t yourusername/videoServer:latest .
+          docker push yourusername/videoServer:latest
+
+      - name: Deploy to server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SERVER_IP: ${{ secrets.SERVER_IP_VIDEO }}
+          SERVER_USER: ${{ secrets.SERVER_USER_VIDEO }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ env.SERVER_USER }}@${{ env.SERVER_IP }} << 'EOF'
+            docker pull yourusername/videoServer:latest
+            docker stop videoServer || true
+            docker rm videoServer || true
+            docker run -d --name videoServer -p 3001:3001 yourusername/videoServer:latest
+          EOF
