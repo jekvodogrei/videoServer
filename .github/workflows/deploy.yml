@@ -1,4 +1,4 @@
-name: Deploy to Stream Server
+name: Deploy to Another Server
 
 on:
    push:
@@ -35,10 +35,7 @@ jobs:
            run: |
               ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ env.SERVER_USER }}@${{ env.SERVER_IP }} << 'EOF'
                 docker pull yourusername/servervideo:latest
-                docker stop servervideom || true
-                docker rmservervideo || true
+                docker stop servervideo || true
+                docker rm servervideo || true
                 docker run -d --name servervideo -p 3001:3001 yourusername/servervideo:latest
               EOF
-
-
-              name: Deploy
