@@ -1,18 +1,23 @@
-# Use an official Node.js runtime as a parent image
-FROM node:14
+# Вкажіть базовий образ
+FROM node:20
 
-# Set the working directory
-WORKDIR /usr/src/app
+# Встановіть ffmpeg
+RUN apt-get update && apt-get install -y ffmpeg
 
-# Install dependencies
+# Встановіть робочу директорію всередині контейнера
+WORKDIR /
+
+# Скопіюйте package.json і package-lock.json (якщо є)
 COPY package*.json ./
+
+# Встановіть залежності
 RUN npm install
 
-# Copy the rest of the application
+# Скопіюйте решту коду програми
 COPY . .
 
-# Expose the port the app runs on
-EXPOSE 3001
+# Відкрийте порт
+EXPOSE 3007
 
-# Run the application
-CMD ["node", "app.js"]
+# Вкажіть команду для запуску додатка
+CMD ["node", "server.js"]
