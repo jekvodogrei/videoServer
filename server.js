@@ -25,7 +25,7 @@ app.use((req, res, next) => {
 const Camera = mongoose.model("Camera", cameraSchema);
 
 mongoose
-   .connect("mongodb://localhost:27017/triolan", {
+   .connect("mongodb://91.196.177.159:27017/triolan", {
       useNewUrlParser: true,
       useUnifiedTopology: true,
    })
@@ -183,6 +183,10 @@ function isCameraAvailable(cameraUrl) {
 
 function checkAndCreateNewDateFolder() {
    const currentDate = moment().tz("Europe/Kiev").format("YYYY-MM-DD");
+   console.log(
+      `Current date: ${currentDate}, last checked date: ${lastCheckedDate}`
+   );
+
    if (currentDate !== lastCheckedDate) {
       lastCheckedDate = currentDate;
       Camera.find({})
@@ -216,6 +220,7 @@ async function startFfmpegForCamera(camera) {
    const currentDate = moment().tz("Europe/Kiev").format("YYYY-MM-DD");
    const outputDir = getOutputDir(camera.ip, currentDate);
 
+   console.log(`Output directory for ${camera.name}: ${outputDir}`);
    if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
    }
